@@ -1,23 +1,28 @@
+from collections import deque
 import sys
-sys.setrecursionlimit(10**5)
+input = sys.stdin.readline
 
-node = int(sys.stdin.readline())
-tree = [[] for _ in range(node + 1)]
-result = [] * (node + 1)
-visited = [0] * (node + 1)
+N = int(input())
+E = [[] for _ in range(N+1)]
+for _ in range(N-1):
+    a, b = map(int, input().split())
+    E[a].append(b)
+    E[b].append(a)
+visited = [False]*(N+1)
+answer = [0]*(N+1)
 
-for i in range(1, node):
-    start_edge, end_edge = map(int, sys.stdin.readline().split())
-    tree[start_edge].append(end_edge)
-    tree[end_edge].append(start_edge)
+def bfs(E, v, vistied):
+    q = deque([v])
+    visited[v] = True
+    while q:
+        x = q.popleft()
+        for i in E[x]:
+            if not visited[i]:
+                answer[i] = x
+                q.append(i)
+                visited[i] = True
 
-def dfs(graph, v):
-    for i in graph[v]:
-        if visited[i] == 0:
-            visited[i] = v
-            dfs(graph, i)
+bfs(E, 1, visited)
 
-dfs(tree, 1)
-
-for i in range(2, node + 1):
-    print(visited[i])
+for i in range(2, N+1):
+    print(answer[i])
