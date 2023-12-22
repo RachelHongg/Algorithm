@@ -1,36 +1,40 @@
 import sys
+input = sys.stdin.readline
+from collections import deque
 sys.setrecursionlimit(10**6)
-k = int(input())
 
 
-def DFS(start, visited, graph, group):
-    visited[start] = group  # 현재 노드의 그룹 저장
-
-    # 인접 노드 탐색
-    for v in graph[start]:
-        if visited[v] == 0:  # 아직 방문하지 않은 노드
-            # -group : 현재 노드의 그룹과 다른 값 전달
-            result = DFS(v, visited, graph, -group)
+def dfs(visited, v, color1, color2):    
+    visited[v] = color1
+    for i in q[v]:
+        # 색 중복일 때
+        if visited[i] == color1:
+            return False
+        # 방문 안했을 때
+        if visited[i] == False:
+            result = dfs(visited, i, color2, color1)
             if not result:
-                return False
-        else:
-            if visited[v] == group:  # 이미 방문한 곳 중에서 노드가 현재 그룹과 같으면 이분 그래프가 아님
                 return False
     return True
 
+T = int(input())
 
-for _ in range(k):
-    V, E = map(int, sys.stdin.readline().split())
-    graph = [[] for _ in range(V+1)]
-    visited = [0] * (V+1)
-    for _ in range(E):
-        a, b = map(int, sys.stdin.readline().split())
-        graph[a].append(b)
-        graph[b].append(a)
-
-    for i in range(1, V+1):
-        if visited[i] == 0:
-            result = (DFS(i, visited, graph, 1))
+for _ in range(T):
+    result = True
+    N, V = map(int, input().split())
+    visited = [False] * (N+1)
+    q = [[] for _ in range(N+1)]
+    for _ in range(V):
+        a, b = map(int, input().split())
+        q[a].append(b)
+        q[b].append(a)
+    for a in range(1, N+1):
+        if visited[a] == False:
+            result = dfs(visited, a, "RED", "BLACK")
             if not result:
                 break
-    print("YES") if result else print("NO")
+            
+    if not result:
+        print("NO")
+    else:
+        print("YES")
