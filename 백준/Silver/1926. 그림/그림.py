@@ -1,50 +1,34 @@
-# 헷갈린 부분
-# 1) 행렬 순서
-# 2) def bfs 없이함.
-
+# visit 체크 안하고, graph를 1 -> 0 으로 바꿔버리자!
 import sys
 from collections import deque
 
-n, m = map(int,sys.stdin.readline().split())
-vis = [[0 for _ in range(m)] for _ in range(n)]
-board = []
+n, m = map(int, sys.stdin.readline().split())
+graph = [[*map(int, sys.stdin.readline().split())] for _ in range(n)]
+dx, dy = [1, 0, -1, 0], [0, 1, 0, -1]
 
-res_num = 0
-res_cnt = 0
-
-for i in range(n):
-    row = list(map(int, sys.stdin.readline().split()))
-    board.append(row)
+res_cnt = res_num = 0
 
 def bfs(startX, startY):
     queue = deque()
-    dx = [1, 0, -1, 0]
-    dy = [0, 1, 0, -1]
-
-            
-    vis[startX][startY] = 1
-    queue.append((startX,startY))
-    x, y = startX, startY
-
     cnt = 1
+    queue.append([startX, startY])
+    graph[startX][startY] = 0
+    x, y =startX, startY
     while queue:
         x, y = queue.popleft()
-        for i in range(4):
-            mx = x + dx[i]
-            ny = y + dy[i]
-            if(mx < 0 or mx >= n or ny < 0 or ny >= m): continue
-            if(board[mx][ny] != 1 or vis[mx][ny] == 1): continue
-            vis[mx][ny] = 1
-            queue.append((mx, ny))
-            cnt += 1
+        for k in range(4):
+            nx, my = x + dx[k], y + dy[k]
+            if(0<= nx < n and 0<= my < m and graph[nx][my] == 1):
+                cnt += 1
+                queue.append((nx, my))
+                graph[nx][my] = 0
     return cnt
-            
             
 for i in range(n):
     for j in range(m):
-        if(board[i][j] == 1 and vis[i][j] != 1):
-            res_num += 1
+        if(graph[i][j] == 1):
             res_cnt = max(res_cnt, bfs(i, j))
+            res_num += 1
 
 print(res_num)
 print(res_cnt)
