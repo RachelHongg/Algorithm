@@ -7,7 +7,7 @@
 visit 없이 하나로 합친 경우, 0인 경우 벽, 1이 경로인 경우
 
 ```python
-from collections from deque()
+from collections import deque()
 
 def bfs():
 
